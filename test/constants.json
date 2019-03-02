@@ -1,6 +1,4 @@
 {
-  "BUILD_ENV": "development",
-  "RELATIVE_BUILD_R4X": "build/resources/main/react4xp_testcustombuildtarget",
   "BUILD_R4X": "/Users/espenjobb/source/_npm_libs/react4xp/runtimeexternals/build/resources/main/react4xp_testcustombuildtarget",
   "EXTERNALS": {
     "react": "React",

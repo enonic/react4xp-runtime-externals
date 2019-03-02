@@ -13,9 +13,8 @@
 // e.g. `{ "react-dom": "ReactDOM" }`. These libraries of course have to be supplied from the calling context (as such, they can be thought of 
 // as peer dependencies, but are obviously impossible to declare). `EXTERNALS` can also be a valid JSON-format string.
 //
-// In the same way, other parameters are expected either directly through `env` or in the JSON file referenced through `env.REACT4XP_CONFIG_FILE`:
-//   - `BUILD_R4X`: mandatory string, full path to the folder where the output files will be built
-//   - `RELATIVE_BUILD_R4X`: mandatory string, path to same output folder, but relative to the project root folder
+// In the same way, one more parameter is expected either directly through `env` or in the JSON file referenced through `env.REACT4XP_CONFIG_FILE`:
+//   - `BUILD_R4X`: mandatory string, full path to the React4xp build folder (where all react4xp-specific output files will be built)
 
 const path = require('path');
 const fs = require('fs');
@@ -83,7 +82,7 @@ module.exports = env => {
     env = env || {};
 
     let config = {};
-    let BUILD_R4X, RELATIVE_BUILD_R4X, BUILD_ENV, EXTERNALS;
+    let BUILD_R4X, BUILD_ENV, EXTERNALS;
     if (env.REACT4XP_CONFIG_FILE) {
         try {
             config = require(env.REACT4XP_CONFIG_FILE);
@@ -94,7 +93,6 @@ module.exports = env => {
 
     BUILD_ENV = env.BUILD_ENV || config.BUILD_ENV;
     BUILD_R4X = env.BUILD_R4X || config.BUILD_R4X;
-    RELATIVE_BUILD_R4X = env.RELATIVE_BUILD_R4X || config.RELATIVE_BUILD_R4X;
     EXTERNALS = env.EXTERNALS || config.EXTERNALS;
 
     const tempFileName = generateTempES6SourceAndGetFilename(
@@ -107,7 +105,7 @@ module.exports = env => {
         {};
 
     const plugins = (tempFileName) ?
-        [ new Chunks2json({outputDir: RELATIVE_BUILD_R4X, filename: 'chunks.externals.json'}) ] :
+        [ new Chunks2json({outputDir: BUILD_R4X, filename: 'chunks.externals.json'}) ] :
         undefined;
 
 

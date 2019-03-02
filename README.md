@@ -20,9 +20,8 @@ This `EXTERNALS` parameter must be an object on the webpack externals format `{ 
 
 These libraries of course have to be available from the calling context (as such, they can be thought of as peer dependencies, but are obviously impossible to declare). 
 
-In the same way, other parameters are expected either directly through `env` or in the JSON file referenced through `env.REACT4XP_CONFIG_FILE`:
-  - `BUILD_R4X`: mandatory string, full path to the folder where the output files will be built
-  - `RELATIVE_BUILD_R4X`: mandatory string, path to same output folder, but relative to the project root folder
+In the same way, one more parameter is expected either directly through `env` or in the JSON file referenced through `env.REACT4XP_CONFIG_FILE`:
+  - `BUILD_R4X`: mandatory string, full path to the React4xp build folder (where all react4xp-specific output files will be built)
   
   
 ## Examples
@@ -32,7 +31,7 @@ In the same way, other parameters are expected either directly through `env` or 
 After installing `react4xp-runtime-externals` and `react` (note the `/lib/`), running this from the project folder `/me/myproject/`:
 
 ```bash
-webpack --config node_modules/react4xp-runtime-externals/lib/webpack.config.js --env.BUILD_R4X=/me/myfolder/build/r4x --env.RELATIVE_BUILD_R4X=build/r4x --env.EXTERNALS="{\"react\":\"React\", \"react-dom\":\"ReactDOM\"}"
+webpack --config node_modules/react4xp-runtime-externals/lib/webpack.config.js --env.BUILD_R4X=/me/myfolder/build/r4x --env.EXTERNALS="{\"react\":\"React\", \"react-dom\":\"ReactDOM\"}"
 ```
 
 This will transpile React and ReactDom into the chunk `/me/myfolder/build/r4x/externals.<HASH>.js`, and since the HASH is dynamic, the chunk filename is available in the file `/me/myfolder/build/r4x/chunks.externals.json`.
@@ -43,7 +42,6 @@ This will transpile React and ReactDom into the chunk `/me/myfolder/build/r4x/ex
 If you put the following into `/me/myfolder/src/constants.json` (or let [react4xp-buildconstants](https://www.npmjs.com/package/react4xp-buildconstants) fix it for you)... 
 ```json
 {
-  "RELATIVE_BUILD_R4X": "build/r4x",
   "BUILD_R4X": "/me/myproject/build/r4x",
   "EXTERNALS": {
     "react": "React",
