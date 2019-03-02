@@ -25,7 +25,9 @@ In the same way, other parameters are expected either directly through `env` or 
   - `RELATIVE_BUILD_R4X`: mandatory string, path to same output folder, but relative to the project root folder
   
   
-## Example
+## Examples
+
+#### With direct `env` parameters
 
 After installing `react4xp-runtime-externals` and `react` (note the `/lib/`), running this from the project folder `/me/myproject/`:
 
@@ -34,6 +36,9 @@ webpack --config node_modules/react4xp-runtime-externals/lib/webpack.config.js -
 ```
 
 This will transpile React and ReactDom into the chunk `/me/myfolder/build/r4x/externals.<HASH>.js`, and since the HASH is dynamic, the chunk filename is available in the file `/me/myfolder/build/r4x/chunks.externals.json`.
+
+
+#### With config file referred in `env`
 
 If you put the following into `/me/myfolder/src/constants.json` (or let [react4xp-buildconstants](https://www.npmjs.com/package/react4xp-buildconstants) fix it for you)... 
 ```json
@@ -52,3 +57,4 @@ If you put the following into `/me/myfolder/src/constants.json` (or let [react4x
 ```bash
 webpack --config node_modules/react4xp-runtime-externals/lib/webpack.config.js --env.REACT4XP_CONFIG_FILE=/me/myfolder/src/constants.json
 ```
+
