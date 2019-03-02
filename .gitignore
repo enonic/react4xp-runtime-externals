@@ -32,6 +32,8 @@ Temporary Items
 lib/
 build/
 test/output/
+webpack.config.js
+!src/webpack.config.js
 
 # Ignore Gradle GUI config
 gradle-app.setting

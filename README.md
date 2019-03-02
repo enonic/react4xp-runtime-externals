@@ -28,10 +28,10 @@ In the same way, one more parameter is expected either directly through `env` or
 
 #### With direct `env` parameters
 
-After installing `react4xp-runtime-externals` and `react` (note the `/lib/`), running this from the project folder `/me/myproject/`:
+After installing `react4xp-runtime-externals` and `react`, running this from the project folder `/me/myproject/`:
 
 ```bash
-webpack --config node_modules/react4xp-runtime-externals/lib/webpack.config.js --env.BUILD_R4X=/me/myfolder/build/r4x --env.EXTERNALS="{\"react\":\"React\", \"react-dom\":\"ReactDOM\"}"
+webpack --config node_modules/react4xp-runtime-externals/webpack.config.js --env.BUILD_R4X=/me/myfolder/build/r4x --env.EXTERNALS="{\"react\":\"React\", \"react-dom\":\"ReactDOM\"}"
 ```
 
 This will transpile React and ReactDom into the chunk `/me/myfolder/build/r4x/externals.<HASH>.js`, and since the HASH is dynamic, the chunk filename is available in the file `/me/myfolder/build/r4x/chunks.externals.json`.
@@ -53,6 +53,6 @@ If you put the following into `/me/myfolder/src/constants.json` (or let [react4x
 
 ...you can achieve the same output with an easier command:
 ```bash
-webpack --config node_modules/react4xp-runtime-externals/lib/webpack.config.js --env.REACT4XP_CONFIG_FILE=/me/myfolder/src/constants.json
+webpack --config node_modules/react4xp-runtime-externals/webpack.config.js --env.REACT4XP_CONFIG_FILE=/me/myfolder/src/constants.json
 ```
 

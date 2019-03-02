@@ -1,16 +1,17 @@
 {
     "name": "react4xp-runtime-externals",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "description": "React4xp helper: using webpack externals as input, generates a runnable externals chunk for shared external libraries",
     "main": "webpack.config.js",
     "files": [
-        "lib/webpack.config.js",
+        "webpack.config.js",
         "README.md"
     ],
     "scripts": {
-        "clean": "rimraf lib",
-        "copy": "copyfiles --flat src/*.* lib",
-        "checkall": "npm run clean && npm run copy"
+        "clean": "rimraf ./webpack.config.js",
+        "copy": "copyfiles --flat src/*.* .",
+        "prepublish": "npm run clean && npm run copy",
+        "postpublish": "npm run clean"
     },
     "repository": {
         "type": "git",
