@@ -1,0 +1,48 @@
+{
+    "name": "react4xp-runtime-externals",
+    "version": "0.0.1",
+    "description": "Source code and webpack compile script for produces a JS file which, when run in Nashorn, will polyfill Nashorn with some necessary functionality for running React4xp's server-side rendering of react components.",
+    "main": "webpack.config.js",
+    "files": [
+        "lib/webpack.config.js"
+    ],
+    "scripts": {
+        "clean": "rimraf lib",
+        "cpjs": "copyfiles --flat src/*.* lib",
+        "compile": "babel src -d lib --ignore \"webpack.config.js\" --no-comments",
+        "checkall": "npm run clean && npm run compile && npm run cpjs"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://bitbucket.org/espen42/react4xp-runtime-externals"
+    },
+    "author": "Espen Norderud",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://bitbucket.org/espen42/react4xp-runtime-externals/issues"
+    },
+    "homepage": "https://bitbucket.org/espen42/react4xp-runtime-externals/",
+    "dependencies": {
+        "chunks-2-json-webpack-plugin": "^1.0.0"
+    },
+    "peerDependencies": {},
+    "devDependencies": {
+        "copyfiles": "^2.0.0",
+        "rimraf": "^2.0.0",
+        "babel-loader": "^7.1.5",
+        "babel-preset-es2015": "^6.24.1",
+        "babel-preset-stage-0": "^6.24.1",
+        "babel-register": "^6.26.0",
+        "webpack": "^4.29.6",
+        "webpack-cli": "^3.2.3"
+    },
+    "babel": {
+        "presets": [
+            "es2015",
+            "stage-0"
+        ],
+        "plugins": [
+            "transform-object-rest-spread"
+        ]
+    }
+}

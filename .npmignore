@@ -1,0 +1,6 @@
+**/
+*
+*.*
+
+# Publish only these:
+!webpack.config.js
