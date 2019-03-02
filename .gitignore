@@ -30,6 +30,7 @@ Temporary Items
 
 ### Output ###
 lib/
+build/
 test/output/
 
 # Ignore Gradle GUI config

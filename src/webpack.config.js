@@ -22,7 +22,8 @@ const fs = require('fs');
 
 const Chunks2json = require('chunks-2-json-webpack-plugin');
 
-
+// TODO: Find a good pattern to control output name for chunks, allowing for multi-chunks and still doing it in one pass (only one chunks.externals.json)
+// TODO: Allowing build path (where BUILD_R4X today must be absolute) to instead be relative to project/calling context
 
 // First autogenerates an externals temporary sourcefile, and then lets webpack have its filename in order to transpile it. Returns null if somethings off.
 function generateTempES6SourceAndGetFilename(externals, outputFileName) {
@@ -103,7 +104,7 @@ module.exports = env => {
 
     const entry = (tempFileName) ?
         { 'externals': tempFileName } :
-        {}
+        {};
 
     const plugins = (tempFileName) ?
         [ new Chunks2json({outputDir: RELATIVE_BUILD_R4X, filename: 'chunks.externals.json'}) ] :
@@ -117,7 +118,7 @@ module.exports = env => {
         entry,
 
         output: {
-            path: BUILD_R4X,  // <-- Sets the base url for plugins and other target dirs. Note the use of {{assetUrl}} in index.html (or index.ejs).
+            path: BUILD_R4X,  // <-- Sets the base url for plugins and other target dirs.
             filename: "[name].[contenthash:9].js",
         },
 
