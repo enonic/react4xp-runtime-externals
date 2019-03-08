@@ -82,7 +82,7 @@ module.exports = env => {
     env = env || {};
 
     let config = {};
-    let BUILD_R4X, BUILD_ENV, EXTERNALS;
+    let BUILD_R4X, BUILD_ENV, EXTERNALS, EXTERNALS_CHUNKS_FILENAME, CHUNK_CONTENTHASH;
     if (env.REACT4XP_CONFIG_FILE) {
         try {
             config = require(env.REACT4XP_CONFIG_FILE);
@@ -94,6 +94,8 @@ module.exports = env => {
     BUILD_ENV = env.BUILD_ENV || config.BUILD_ENV;
     BUILD_R4X = env.BUILD_R4X || config.BUILD_R4X;
     EXTERNALS = env.EXTERNALS || config.EXTERNALS;
+    CHUNK_CONTENTHASH = env.CHUNK_CONTENTHASH || config.CHUNK_CONTENTHASH;
+    EXTERNALS_CHUNKS_FILENAME = env.EXTERNALS_CHUNKS_FILENAME || config.EXTERNALS_CHUNKS_FILENAME;
 
     const tempFileName = generateTempES6SourceAndGetFilename(
         EXTERNALS,
@@ -105,10 +107,18 @@ module.exports = env => {
         {};
 
     const plugins = (tempFileName) ?
-        [ new Chunks2json({outputDir: BUILD_R4X, filename: 'chunks.externals.json'}) ] :
+        [ new Chunks2json({
+            outputDir: BUILD_R4X,
+            filename: EXTERNALS_CHUNKS_FILENAME
+        })] :
         undefined;
 
-
+    // Decides whether or not to hash filenames of common-component chunk files, and the length of the hash
+    const chunkFileName = (!CHUNK_CONTENTHASH) ?
+        "[name].js" :
+        isNaN(CHUNK_CONTENTHASH) ?
+            CHUNK_CONTENTHASH :
+            `[name].[contenthash:${parseInt(CHUNK_CONTENTHASH)}].js`;
 
     return {
         mode: BUILD_ENV,
@@ -117,7 +127,7 @@ module.exports = env => {
 
         output: {
             path: BUILD_R4X,  // <-- Sets the base url for plugins and other target dirs.
-            filename: "[name].[contenthash:9].js",
+            filename: chunkFileName,
         },
 
         resolve: {

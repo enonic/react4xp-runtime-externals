@@ -1,8 +1,0 @@
-{
-  "BUILD_R4X": "/Users/espenjobb/source/_npm_libs/react4xp/runtimeexternals/build/resources/main/react4xp_testcustombuildtarget",
-  "EXTERNALS": {
-    "react": "React",
-    "react-dom": "ReactDOM",
-    "react-dom/server": "ReactDOMServer"
-  }
-}

@@ -16,43 +16,38 @@ npm add --save-dev react4xp-runtime-externals
 
 Which dependencies are inserted into the external library, depends on an `env.EXTERNALS` parameter. `EXTERNALS` can also be supplied ìndirectly through a JSON config file referenced with an `env.REACT4XP_CONFIG_FILE` parameter - see for example [react4xp-buildconstants](https://www.npmjs.com/package/react4xp-buildconstants), although you can roll your own. 
 
-This `EXTERNALS` parameter must be an object on the webpack externals format `{ "libraryname": "ReferenceInCode", ... }`. `EXTERNALS` can also be a valid JSON-format string. 
+This `EXTERNALS` parameter must be an object on the webpack externals format `{ "libraryname": "ReferenceInCode", ... }`. `EXTERNALS` can also be an object as a valid JSON-format string. 
 
-These libraries of course have to be available from the calling context (as such, they can be thought of as peer dependencies, but are obviously impossible to declare). 
+These libraries of course have to be available from the calling context (as such, they can be thought of as peer dependencies, but are obviously impossible to declare here). 
 
-In the same way, one more parameter is expected either directly through `env` or in the JSON file referenced through `env.REACT4XP_CONFIG_FILE`:
-  - `BUILD_R4X`: mandatory string, full path to the React4xp build folder (where all react4xp-specific output files will be built)
+In addition, a few more parameters are mandatory. Just like for `EXTERNALS`, they're expected either directly through `env` (webpack's [environment variable](https://webpack.js.org/guides/environment-variables/)) or in the JSON file referenced through `env.REACT4XP_CONFIG_FILE` (which is both preferable and easier):
+  - `BUILD_R4X`: string, full path to the React4xp build folder (where all react4xp-specific output files will be built)
+  - `CHUNK_CONTENTHASH`: integer, length of hash in chunk filenames
+  - `EXTERNALS_CHUNKS_FILENAME`: string,name of an intermediary JSON file that stores the dynamic, hashed name of the output chunk.
   
-  
-## Examples
+## Example
 
-#### With direct `env` parameters
+After installing `react4xp-runtime-externals`, `react` and `react-dom`, and running this from the project folder `/me/myproject/`: put the following into `/me/myfolder/src/react4xpConstants.json` (or let [react4xp-buildconstants](https://www.npmjs.com/package/react4xp-buildconstants) create it for you)... 
 
-After installing `react4xp-runtime-externals` and `react`, running this from the project folder `/me/myproject/`:
-
-```bash
-webpack --config node_modules/react4xp-runtime-externals/webpack.config.js --env.BUILD_R4X=/me/myfolder/build/r4x --env.EXTERNALS="{\"react\":\"React\", \"react-dom\":\"ReactDOM\"}"
-```
-
-This will transpile React and ReactDom into the chunk `/me/myfolder/build/r4x/externals.<HASH>.js`, and since the HASH is dynamic, the chunk filename is available in the file `/me/myfolder/build/r4x/chunks.externals.json`.
-
-
-#### With config file referred in `env`
-
-If you put the following into `/me/myfolder/src/constants.json` (or let [react4xp-buildconstants](https://www.npmjs.com/package/react4xp-buildconstants) fix it for you)... 
 ```json
 {
   "BUILD_R4X": "/me/myproject/build/r4x",
   "EXTERNALS": {
     "react": "React",
     "react-dom": "ReactDOM"
-  }
+  },
+  "CHUNK_CONTENTHASH": 8,
+  "EXTERNALS_CHUNKS_FILENAME": "chunks.externals.json"
 }
 
 ```
 
-...you can achieve the same output with an easier command:
+Then run:
+
 ```bash
-webpack --config node_modules/react4xp-runtime-externals/webpack.config.js --env.REACT4XP_CONFIG_FILE=/me/myfolder/src/constants.json
+webpack --config node_modules/react4xp-runtime-externals/webpack.config.js --env.REACT4XP_CONFIG_FILE=/me/myfolder/src/react4xpConstants.json
 ```
+
+This will transpile React and ReactDom into the chunk `/me/myfolder/build/r4x/externals.<HASH>.js`, and that chunk filename is available in the file `/me/myfolder/build/r4x/chunks.externals.json`.
+
 
