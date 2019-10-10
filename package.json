@@ -13,8 +13,8 @@
     "copy": "copyfiles --flat src/*.* .",
     "prepublish": "npm run clean && npm run copy",
     "postpublish": "npm run clean",
-    "test": "node_modules/webpack-cli/bin/cli.js --config src/webpack.config.js --env.REACT4XP_CONFIG_FILE=$(pwd)/test/react4xpConstants.json --env.BUILD_R4X=$(pwd)/build && echo \"\" && echo \"--> build/\" && ls build",
-    "pretest": "npm run clean",
+    "test": "node_modules/webpack-cli/bin/cli.js --config src/webpack.config.js --env.REACT4XP_CONFIG_FILE=/test/react4xpConstants.json --env.BUILD_R4X=$(pwd)/build && echo \"\" && echo \"--> build/\" && ls build",
+    "pretest": "npm run clean ",
     "lint": "eslint --fix src/**/*.js"
   },
   "repository": {

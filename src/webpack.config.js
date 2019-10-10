@@ -103,7 +103,7 @@ module.exports = (env = {}) => {
   if (env.REACT4XP_CONFIG_FILE) {
     try {
       // eslint-disable-next-line import/no-dynamic-require, global-require
-      config = require(path.normalize(process.cwd(), env.REACT4XP_CONFIG_FILE));
+      config = require(path.join(process.cwd(), env.REACT4XP_CONFIG_FILE));
     } catch (e) {
       console.error(e);
     }
