@@ -1,31 +1,47 @@
-// Externals is webpack's way to keep certain dependencies out of the compilation/chunking flow,
-// and instead tell compiled code that they will be globally available in runtime from other ímported libraries, say from a CDN.
-//
-// This webpack file wraps the building those external libraries from existing packages.
-// They are built into one separate chunk (TODO for later: multiple chunks?),
-// along with some features tailored for React4xp: it gives the produced chunk a contenthash in the filename, and outputs a JSON file with the
-// hashed name, for runtime reference. Content-hashed for caching and cache-busting.
-//
-// Which dependencies are inserted into the external library, depends on an `env.EXTERNALS` parameter (EXTERNALS can also be supplied through a
-// JSON config file referenced with an `env.REACT4XP_CONFIG_FILE` - see for example
-// [react4xp-buildconstants](https://www.npmjs.com/package/react4xp-buildconstants), although you can roll your own).
-// This `EXTERNALS` parameter must be an object on the webpack externals format `{ "libraryname": "ReferenceInCode", ... }`,
-// e.g. `{ "react-dom": "ReactDOM" }`. These libraries of course have to be supplied from the calling context (as such, they can be thought of
-// as peer dependencies, but are obviously impossible to declare). `EXTERNALS` can also be a valid JSON-format string.
-//
-// In the same way, one more parameter is expected either directly through `env` or in the JSON file referenced through `env.REACT4XP_CONFIG_FILE`:
-//   - `BUILD_R4X`: mandatory string, full path to the React4xp build folder (where all react4xp-specific output files will be built)
+/* eslint-disable no-console */
+
+/*
+  Externals is webpack's way to keep certain dependencies
+  out of the compilation/chunking flow,
+  and instead tell compiled code that they will be
+  globally available in runtime from other ímported libraries, say from a CDN.
+
+  This webpack file wraps the building those external libraries from existing packages.
+  They are built into one separate chunk (TODO for later: multiple chunks?),
+  along with some features tailored for React4xp:
+  it gives the produced chunk a contenthash in the filename, and outputs a JSON file with the
+  hashed name, for runtime reference. Content-hashed for caching and cache-busting.
+
+  Which dependencies are inserted into the external library,
+  depends on an `env.EXTERNALS` parameter (EXTERNALS can also be supplied through a
+  JSON config file referenced with an `env.REACT4XP_CONFIG_FILE` - see for example
+  [react4xp-buildconstants](https://www.npmjs.com/package/react4xp-buildconstants), although you can roll your own).
+  This `EXTERNALS` parameter must be an object on the webpack
+  externals format `{ "libraryname": "ReferenceInCode", ... }`,
+  e.g. `{ "react-dom": "ReactDOM" }`. These libraries of course have to be supplied
+  from the calling context (as such, they can be thought of
+  as peer dependencies, but are obviously impossible to declare).
+  `EXTERNALS` can also be a valid JSON-format string.
+
+  In the same way, one more parameter is expected either directly through `env`
+  or in the JSON file referenced through `env.REACT4XP_CONFIG_FILE`:
+  - `BUILD_R4X`: mandatory string, full path to the
+  React4xp build folder (where all react4xp-specific output files will be built)
+*/
 
 const path = require("path");
 const fs = require("fs");
 
 const Chunks2json = require("chunks-2-json-webpack-plugin");
 
-// TODO: Find a good pattern to control output name for chunks, allowing for multi-chunks and still doing it in one pass (only one chunks.externals.json)
-// TODO: Allowing build path (where BUILD_R4X today must be absolute) to instead be relative to project/calling context
+// TODO: Find a good pattern to control output name for chunks,
+// allowing for multi-chunks and still doing it in one pass (only one chunks.externals.json)
+// TODO: Allowing build path (where BUILD_R4X today must be absolute)
+// to instead be relative to project/calling context
 
-// First autogenerates an externals temporary sourcefile, and then lets webpack have its filename in order to transpile it. Returns null if somethings off.
-function generateTempES6SourceAndGetFilename(externals, outputFileName) {
+// First autogenerates an externals temporary sourcefile,
+// and then lets webpack have its filename in order to transpile it. Returns null if somethings off.
+function generateTempES6SourceAndGetFilename(_externals, outputFileName) {
   if (
     typeof outputFileName !== "string" ||
     (outputFileName || "").trim() === ""
@@ -39,8 +55,10 @@ function generateTempES6SourceAndGetFilename(externals, outputFileName) {
     return null;
   }
 
+  let externals = _externals;
+
   if (typeof externals === "string") {
-    externals = JSON.parse(externals);
+    externals = JSON.parse(_externals);
   }
   if (
     !externals ||
@@ -64,48 +82,38 @@ function generateTempES6SourceAndGetFilename(externals, outputFileName) {
     externalsImports += `import ${externals[key]} from '${key}';\n`;
   });
 
-  /*Object.keys(externals).forEach( key => {
+  /* Object.keys(externals).forEach( key => {
         externalsImports += `console.log('${externals[key]}: ' + ${externals[key]});\n`;
-    }); //*/
+    }); // */
 
   Object.keys(externals).forEach(key => {
     externalsExports += `\twindow.${externals[key]} = ${externals[key]};\n`;
   });
 
-  const externalsES6 =
-    `// AUTO-GENERATED by ${__filename}\n\n` +
-    externalsImports +
-    "\n(function(window) {\n" +
-    externalsExports +
-    "} )(typeof window !== 'undefined' ? window : global);\n";
+  const externalsES6 = `// AUTO-GENERATED by ${__filename}\n\n${externalsImports}\n(function(window) {\n${externalsExports}} )(typeof window !== 'undefined' ? window : global);\n`;
 
   fs.writeFileSync(outputFileName, externalsES6);
 
   return outputFileName;
 }
 
-module.exports = env => {
-  env = env || {};
-
+module.exports = (env = {}) => {
   let config = {};
-  let BUILD_R4X,
-    BUILD_ENV,
-    EXTERNALS,
-    EXTERNALS_CHUNKS_FILENAME,
-    CHUNK_CONTENTHASH;
+
   if (env.REACT4XP_CONFIG_FILE) {
     try {
+      // eslint-disable-next-line import/no-dynamic-require, global-require
       config = require(path.normalize(process.cwd(), env.REACT4XP_CONFIG_FILE));
     } catch (e) {
       console.error(e);
     }
   }
 
-  BUILD_ENV = env.BUILD_ENV || config.BUILD_ENV;
-  BUILD_R4X = env.BUILD_R4X || config.BUILD_R4X;
-  EXTERNALS = env.EXTERNALS || config.EXTERNALS;
-  CHUNK_CONTENTHASH = env.CHUNK_CONTENTHASH || config.CHUNK_CONTENTHASH;
-  EXTERNALS_CHUNKS_FILENAME =
+  const BUILD_ENV = env.BUILD_ENV || config.BUILD_ENV;
+  const BUILD_R4X = env.BUILD_R4X || config.BUILD_R4X;
+  const EXTERNALS = env.EXTERNALS || config.EXTERNALS;
+  const CHUNK_CONTENTHASH = env.CHUNK_CONTENTHASH || config.CHUNK_CONTENTHASH;
+  const EXT_CHUNKS_FILENAME =
     env.EXTERNALS_CHUNKS_FILENAME || config.EXTERNALS_CHUNKS_FILENAME;
 
   const tempFileName = generateTempES6SourceAndGetFilename(
@@ -119,17 +127,24 @@ module.exports = env => {
     ? [
         new Chunks2json({
           outputDir: BUILD_R4X,
-          filename: EXTERNALS_CHUNKS_FILENAME
+          filename: EXT_CHUNKS_FILENAME
         })
       ]
     : undefined;
 
-  // Decides whether or not to hash filenames of common-component chunk files, and the length of the hash
-  const chunkFileName = !CHUNK_CONTENTHASH
-    ? "[name].js"
-    : isNaN(CHUNK_CONTENTHASH)
-    ? CHUNK_CONTENTHASH
-    : `[name].[contenthash:${parseInt(CHUNK_CONTENTHASH)}].js`;
+  // Decides whether or not to hash filenames of common-component chunk files, and the length
+  let chunkFileName;
+
+  if (!CHUNK_CONTENTHASH) {
+    chunkFileName = "[name].js";
+  } else if (typeof CHUNK_CONTENTHASH === "string") {
+    chunkFileName = CHUNK_CONTENTHASH;
+  } else {
+    chunkFileName = `[name].[contenthash:${parseInt(
+      CHUNK_CONTENTHASH,
+      10
+    )}].js`;
+  }
 
   return {
     mode: BUILD_ENV,
