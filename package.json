@@ -1,6 +1,6 @@
 {
   "name": "react4xp-runtime-externals",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "React4xp helper: using webpack externals as input, generates a runnable externals chunk for shared external libraries",
   "main": "webpack.config.js",
   "files": [
