@@ -111,7 +111,24 @@ module.exports = (env = {}) => {
 
   const BUILD_ENV = env.BUILD_ENV || config.BUILD_ENV;
   const BUILD_R4X = env.BUILD_R4X || config.BUILD_R4X;
+
+  /* EXTERNALS is the main object handled here. By default it looks like this:
+      {
+        "react": "React",
+        "react-dom": "ReactDOM",
+        "react-dom/server": "ReactDOMServer"
+      }
+      The parent project using this package will run this webpack.config.js, and is expected to supply its own
+      versions of the packages in the EXTERNALS object - in this case react and react-dom. Because of this,
+      react and react-dom are set as peerDependencies in this project's package.json.
+
+      EXTERNALS can be adjusted (either by an env.EXTERNALS cli argument, or by altering the master config file
+      referred to by env.REACT4XP_CONFIG_FILE. That file is by default built by react4xp-buildcomponents). If you do,
+      the parent project must handle the packages (the keys in the EXTERNALS object).
+   */
+
   const EXTERNALS = env.EXTERNALS || config.EXTERNALS;
+
   const CHUNK_CONTENTHASH = env.CHUNK_CONTENTHASH || config.CHUNK_CONTENTHASH;
   const EXT_CHUNKS_FILENAME =
     env.EXTERNALS_CHUNKS_FILENAME || config.EXTERNALS_CHUNKS_FILENAME;
