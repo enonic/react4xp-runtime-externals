@@ -1,6 +1,6 @@
 {
   "name": "react4xp-runtime-externals",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "React4xp helper: using webpack externals as input, generates a runnable externals chunk for shared external libraries",
   "main": "webpack.config.js",
   "files": [
@@ -61,8 +61,8 @@
     "lint-staged": "^8.1.7",
     "prettier": "^1.18.2",
     "rimraf": "^2.0.0",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "webpack": "^4",
+    "webpack-cli": "^3"
   },
   "babel": {
     "presets": [
